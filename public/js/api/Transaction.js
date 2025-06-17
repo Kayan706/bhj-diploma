@@ -1,5 +1,5 @@
 class Transaction extends Entity {
-    static URL = '/transaction';
-
+  static get URL() {
+    return '/transaction';
+  }
 }
-

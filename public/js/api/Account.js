@@ -1,18 +1,16 @@
 
 class Account extends Entity {
+  static get URL() {
+    return '/account';
+  }
 
-  static URL = '/account';
 
-  static get(id = '', callback = f => f) {
-    let options = {
-      url: `${this.URL}/${id}`,
+  static get(id, callback) {
+    createRequest({
+      url: this.URL + `/${id}`,
       responseType: 'json',
-      data: null, 
-      
       method: 'GET',
       callback: callback
-    }
-    createRequest(options)
-    console.log(options)
+    });
   }
 }

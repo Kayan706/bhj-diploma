@@ -1,45 +1,64 @@
-const createRequest = (options = {}) => {
+const handleError = (error) => {
+  if (App.state !== 'init' && Object.keys(error).length) {
+    let content = 'Сервер сообщил об ошибке: ';
 
-
-
-  try {
-    let formData = new FormData();
-    const xhr = new XMLHttpRequest;
-
-    if (options.method === "GET") {
-      options.url += `?`;
-      for (let option in options.data) {
-
-        options.url += `${option}=${options.data[option]}&`;
-        console.log('Отправили гет, options.data =' + options.data, options)
-      }
-    }
-    else {
-      for (let option in options.data) {
-        formData.append(option, options.data[option]);
-        console.log('Отправили пост, options.data =' + options.data, options)
-      }
-    }
-    if (options.headers) {
-      for (let header in options.headers) {
-        xhr.setRequestHeader(header, options.headers[header]);
-      }
+    if (typeof error === 'object') {
+      content += Object.values(error).join(' ');
+    } else {
+      content += error;
     }
 
-    xhr.open(options.method, options.url);
-    xhr.withCredentials = true;
-    xhr.responseType = "json";
-    xhr.send(formData);
+    if (/[^.]$/.test(content)) {
+      content += '.';
+    }
 
-    xhr.addEventListener("readystatechange", () => {
-      if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-        options.callback(null, xhr.response);
-
-      }
-    })
-  }
-  catch (e) {
-    options.callback(e, null);
-    console.log('Произошла ошибка ' + e)
+    console.error(content);
   }
 }
+
+
+const createRequest = (options) => {
+  if (!options) {
+    throw new Error('Параметр options функции createRequest не задан');
+  }
+
+  let {url, headers, data, responseType, method, callback} = options;
+  const xhr = new XMLHttpRequest();
+
+  try {
+    xhr.open(method, url);
+    xhr.responseType = responseType;
+    xhr.withCredentials = true;
+
+    if (headers) {
+      for (const [key, value] of Object.entries(headers)) {
+        xhr.setRequestHeader(key, value);
+      }
+    }
+
+    xhr.onloadend = () => {
+      if (String(xhr.status).startsWith('2')) {
+        callback(xhr.response?.error, xhr.response);
+      } else {
+        let content = 'Сервер не принял запрос. ';
+        content += `Ошибка ${xhr.status}: ${xhr.statusText}.`;
+        console.error(content);
+      }
+    }
+
+    if (data === undefined) {
+      xhr.send();
+    } else {
+      const formData = new FormData();
+
+      for (const [key, value] of Object.entries(data)) {
+        formData.append(key, value);
+      }
+
+      xhr.send(formData);
+    }
+  }
+  catch (e) {
+    console.error(e);
+  }
+};

@@ -1,15 +1,16 @@
 class RegisterForm extends AsyncForm {
 
-  onSubmit(options) {
-
-    User.register(options, (e, response) => {
-      if (response.success) {
-        const registerForm = document.querySelector("#register-form");
-        registerForm.reset();
-        App.setState('user-logged');
+  onSubmit(data) {
+    const callback = (error) => {
+      if (error) {
+        handleError(error);
+      } else {
+        this.element.reset();
         App.getModal('register').close();
+        App.setState('user-logged');
       }
     }
-    )
+
+    User.register(data, callback);
   }
 }

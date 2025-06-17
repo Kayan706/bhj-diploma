@@ -1,5 +1,3 @@
-const body = document.getElementsByTagName("body");
-
 class Sidebar {
 
   static init() {
@@ -8,33 +6,43 @@ class Sidebar {
   }
 
   static initToggleButton() {
-    const sidebarToggle = document.querySelector(".sidebar-toggle");
-    sidebarToggle.addEventListener("click", () => {
-      body[0].classList.toggle("sidebar-open");
-      body[0].classList.toggle("sidebar-collapse");
-    })
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+
+    sidebarToggle.onclick = () => {
+      document.body.classList.toggle('sidebar-open');
+      document.body.classList.toggle('sidebar-collapse');
+    }
   }
 
   static initAuthLinks() {
+    const menuItems = document.getElementsByClassName('menu-item');
 
-    const registerButton = document.getElementsByClassName("menu-item_register");
-    registerButton[0].addEventListener("click", (e) => {
-      e.preventDefault();
-      App.getModal('register').open();
-    });
-    const loginButton = document.getElementsByClassName("menu-item_login");
-    loginButton[0].addEventListener("click", (e) => {
-      e.preventDefault();
-      App.getModal('login').open();
-    });
-    const logOutButton = document.getElementsByClassName("menu-item_logout");
-    logOutButton[0].addEventListener("click", () => {
+    for (const item of menuItems) {
+      let handler;
 
-      User.logout(User.current(), (err, response) => {
-        if (response && response.success) {
-          App.setState('init');
+      if (item.classList.contains('menu-item_login')) {
+        handler = () => {
+          App.getModal('login').open();
         }
-      });
-    });
+      } else if (item.classList.contains('menu-item_register')) {
+        handler = () => {
+          App.getModal('register').open();
+        }
+      } else if (item.classList.contains('menu-item_logout')) {
+        handler = () => {
+          const callback = (error) => {
+            if (error) {
+              handleError(error);
+            } else {
+              App.setState('init');
+            }
+          };
+
+          User.logout(User.current(), callback);
+        }
+      }
+
+      item.onclick = handler;
+    }
   }
 }

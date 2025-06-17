@@ -2,18 +2,18 @@ class UserWidget {
 
   constructor(element) {
     if (!element) {
-      throw new Error('Элемент не существует');
+      throw new Error('Параметр element класса UserWidget не задан');
     }
     this.element = element;
-
   }
-  update() {
-    const user = User.current();
-    if (!user) {
-      return;
-    } else {
-      const name = this.element.querySelector('.user-name');
-      name.textContent = user.name;
-    }
 
-}}
+
+  update(){
+    const name = User.current().name;
+
+    if (name) {
+      const nameBox = this.element.querySelector('.user-name');
+      nameBox.textContent = name;
+    }
+  }
+}

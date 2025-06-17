@@ -1,24 +1,20 @@
 class TransactionsWidget {
 
- constructor(element) {
+  constructor(element) {
     if (!element) {
-      throw new Error('Элемент не существует');
+      throw new Error('Параметр element класса TransactionsWidget не задан');
     }
     this.element = element;
+
     this.registerEvents();
   }
 
- registerEvents() {
-    const createIncomeButton = this.element.querySelector('.create-income-button'),
-      createExpenseButton = this.element.querySelector('.create-expense-button'),
 
-      incomeModal = App.getModal('newIncome'),
-      expenseModal = App.getModal('newExpense');
+  registerEvents() {
+    const income = this.element.querySelector('.btn-success');
+    const expense = this.element.querySelector('.btn-danger');
 
-    createIncomeButton.addEventListener('click', () => incomeModal.open());
-    createExpenseButton.addEventListener('click', () => expenseModal.open());
-
-
-
+    income.onclick = () => App.getModal('newIncome').open();
+    expense.onclick = () => App.getModal('newExpense').open();
   }
 }

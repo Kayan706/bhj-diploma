@@ -1,30 +1,33 @@
-const modalWindow = Array.from(document.getElementsByClassName("modal fade in"));
 class Modal {
-  constructor(element) {
-    try {
-      this.element = element;
-      this.registerEvents();
+
+  constructor(element){
+    if (!element) {
+      throw new Error('Параметр element класса Modal не задан');
     }
-    catch (err) {
-      console.log(err);
-    }
+    this.element = element;
+    
+    this.registerEvents();
   }
 
   registerEvents() {
-    this.element.querySelectorAll('[data-dismiss]').forEach(item => {
-      item.addEventListener('click', (e) => {
+    const closeTriggers = this.element.querySelectorAll('[data-dismiss="modal"]');
+
+    for (const closeTrigger of closeTriggers) {
+      closeTrigger.onclick = () => {
         this.onClose();
-        e.preventDefault();
-      })
-    })
+      }
+    }
   }
-  onClose(e) {
+
+  onClose() {
     this.close();
   }
+
   open() {
     this.element.style.display = 'block';
   }
+
   close() {
-    this.element.style.display = 'none';
+    this.element.style.removeProperty('display');
   }
 }

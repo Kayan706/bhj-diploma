@@ -1,38 +1,41 @@
+
 class AsyncForm {
 
   constructor(element) {
     if (!element) {
-      throw new Error('Ошибка!')
+      throw new Error('Параметр element класса AsyncForm не задан');
     }
     this.element = element;
+
     this.registerEvents();
   }
 
 
   registerEvents() {
-    this.element.addEventListener("submit", (e) => {
-      e.preventDefault();
+    this.element.addEventListener('submit', (event) => {
+      event.preventDefault();
+
       this.submit();
-    })
+    });
   }
 
   getData() {
-    let obj = {};
-    let form = this.element;
+    const data = {};
 
-    for (let atr of form) {
-      obj[atr.name] = atr.value;
+    const formData = new FormData(this.element).entries();
+
+    for (const item of formData) {
+      data[item[0]] = item[1];
     }
-    return obj;
+
+    return data;
   }
 
   onSubmit(options) {
 
   }
-  submit() {
 
-    let result = this.getData();
-    this.onSubmit(result);
-    console.log(result)
+  submit() {
+    this.onSubmit(this.getData());
   }
 }

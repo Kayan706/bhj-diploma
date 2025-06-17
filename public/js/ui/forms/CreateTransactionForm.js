@@ -2,38 +2,54 @@ class CreateTransactionForm extends AsyncForm {
 
   constructor(element) {
     super(element);
+    if (!element) {
+      throw new Error('Параметр element класса CreateTransactionForm не задан');
+    }
     this.element = element;
+
     this.renderAccountsList();
   }
 
   renderAccountsList() {
-    if (!User.current()) {
-      return;
-    } else
-      Account.list(User.current(), (e, response) => {
+    const user = User.current();
 
-        if (response.success) {
-          const select = this.element.querySelector(".accounts-select");
-          select.innerHTML = '';
-          response.data.forEach(element => {
-            select.insertAdjacentHTML("beforeend", `<option value="${element.id}">${element.name}</option>`);
-          });
+    const callback = (error, response) => {
+      if (error) {
+        handleError(error);
+      } else {
+        const selectBox = this.element.querySelector('.accounts-select');
+        selectBox.textContent = '';
+        let html = '';
+        for (const account of response.data) {
+          html += `
+            <option value="${account.id}">${account.name}</option>
+          `;
         }
-      })
+
+        selectBox.insertAdjacentHTML('beforeend', html);
+      }
+    }
+
+    Account.list(user, callback);
   }
 
-  onSubmit(options) {
-    Transaction.create(options, (e, response) => {
-
-      if (response.success) {
+  onSubmit(data) {
+    const callback = (error) => {
+      if (error) {
+        handleError(error);
+      } else {
         this.element.reset();
-        App.getModal('newExpense').close();
-        App.getModal('newIncome').close();
-        App.update();
-        console.log('произошлa транзакция расхода/дохода');
-        console.log(options)
+        if (App.getModal('newIncome')) {
+          App.getModal('newIncome').close();
+        }
+        if (App.getModal('newExpense')) {
+          App.getModal('newExpense').close();
+        }
+        App.getWidget("accounts").update();
+        App.getPage("transactions").update();
       }
-    })
+    }
 
+    Transaction.create(data, callback);
   }
 }
