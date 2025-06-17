@@ -1,4 +1,3 @@
-
 class CreateAccountForm extends AsyncForm {
 
   onSubmit(data) {

@@ -1,5 +1,4 @@
 class App {
-
   static init() {
     this.element = document.querySelector(".app");
     this.content = document.querySelector(".content-wrapper");
@@ -10,7 +9,6 @@ class App {
     this.initForms();
     this.initModals();
     this.initWidgets();
-
     Sidebar.init();
   }
 

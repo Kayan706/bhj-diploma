@@ -1,4 +1,3 @@
-
 class User {
   static get URL() {
     return '/user';

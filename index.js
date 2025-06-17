@@ -33,8 +33,6 @@ app.get('*', function (_, res) {
 });
 
 app.listen(PORT, () => console.log(`Server started at ${PORT}`));
-
-
 function setDefaultUser(database){
     database.defaults({
         users: [

@@ -1,4 +1,3 @@
-
 class Account extends Entity {
   static get URL() {
     return '/account';
